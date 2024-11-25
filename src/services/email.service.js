@@ -4,7 +4,7 @@ import { sendEmail } from "../utils/mail.util.js"
 class EmailService {
     static async sendVerificationEmail(email, verificationToken) {
         try {
-            const urlVerification = `${ENVIRONMENT.BASE_URL}/api/auth/verify/${verificationToken}`
+            const urlVerification = `${ENVIRONMENT.URL_FRONT}/verify/${verificationToken}`
             const logoUrl = 'https://res.cloudinary.com/dhz0yetjy/image/upload/v1732471134/slack-logo_wxamev.png'
 
             const htmlContent = `

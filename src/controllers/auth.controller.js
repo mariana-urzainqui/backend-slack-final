@@ -20,7 +20,7 @@ export const registerUserController = async (req, res) => {
                 .setMessage('Bad request')
                 .setPayload(
                     {
-                        errors: {
+                        errors: { 
                             email: 'El email ya esta en uso'
                         }
                     }
