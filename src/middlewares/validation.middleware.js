@@ -52,3 +52,7 @@ export const validateLoginData = [
     handleErrors
 ]
 
+export const validateForgotPasswordData = [
+    ...validateEmail,
+    handleErrors
+]

@@ -1,9 +1,7 @@
 import ENVIRONMENT from "../config/environment.config.js"
-import User from "../models/user.model.js"
 import ResponseBuilder from "../utils/builders/responseBuilder.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { sendEmail } from "../utils/mail.util.js"
 import UserRepository from "../repositories/user.repository.js"
 import EmailService from "../services/email.service.js"
 
@@ -156,7 +154,7 @@ export const loginController = async (req, res) => {
     try {
         const { email, password } = req.body
 
-        const user = await UserRepository.obtenerPorEmail(email)
+        const user = await UserRepository.getByEmail(email)
         if (!user) {
             const response = new ResponseBuilder()
                 .setOk(false)
@@ -189,7 +187,7 @@ export const loginController = async (req, res) => {
             const response = new ResponseBuilder()
                 .setOk(false)
                 .setStatus(401)
-                .setMessage('Credenciales inválidad')
+                .setMessage('Credenciales inválidas')
                 .setPayload({
                     errors: {
                         general: 'Email o contraseña incorrectos'
@@ -243,20 +241,8 @@ export const loginController = async (req, res) => {
 export const forgotPasswordController = async (req, res) => {
     try {
         const { email } = req.body
-        if (!email) {
-            const response = new ResponseBuilder()
-                .setOk(false)
-                .setStatus(400)
-                .setMessage('Bad Request')
-                .setPayload({
-                    errors: {
-                        email: 'El email es requerido'
-                    }
-                })
-                .build()
-            return res.status(400).json(response)
-        }
-        const user = await UserRepository.obtenerPorEmail(email)
+
+        const user = await UserRepository.getByEmail(email)
         if (!user) {
             const response = new ResponseBuilder()
                 .setOk(false)
@@ -273,58 +259,7 @@ export const forgotPasswordController = async (req, res) => {
         const resetToken = jwt.sign({ email: user.email }, ENVIRONMENT.JWT_SECRET, {
             expiresIn: '1h'
         })
-        const resetUrl = `${ENVIRONMENT.URL_FRONT}/reset-password/${resetToken}`
-        sendEmail({
-            to: user.email,
-            subject: 'Restablecer contraseña',
-            html: `
-    <div style="
-        font-family: Arial, sans-serif;
-        color: #333;
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    ">
-        <h1 style="
-            color: #4CAF50;
-            font-size: 24px;
-            text-align: center;
-        ">Solicitud para restablecer contraseña</h1>
-        <p style="
-            font-size: 16px;
-            line-height: 1.5;
-            text-align: center;
-            margin: 20px 0;
-        ">
-            Has solicitado restablecer tu contraseña. Haz clic en el enlace de abajo para continuar con el proceso:
-        </p>
-        <div style="text-align: center; margin-top: 20px;">
-            <a href='${resetUrl}' style="
-                display: inline-block;
-                background-color: #333;
-                color: #fff;
-                padding: 10px 20px;
-                font-size: 16px;
-                border-radius: 5px;
-                text-decoration: none;
-            ">
-                Restablecer contraseña
-            </a>
-        </div>
-        <p style="
-            font-size: 14px;
-            color: #777;
-            text-align: center;
-            margin-top: 30px;
-        ">
-            Si no solicitaste este cambio, ignora este mensaje.
-        </p>
-    </div>
-    `
-        })
+        await EmailService.sendPasswordResetEmail(user.email, resetToken)
         const response = new ResponseBuilder()
             .setOk(true)
             .setStatus(200)
