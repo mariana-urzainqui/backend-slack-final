@@ -20,6 +20,18 @@ export const validateName = [
         .isLength({ min: 3 }).withMessage('El nombre debe tener al menos 3 caracteres')
 ]
 
+export const validateWorkspaceName = [
+    body('workspaceName')
+        .notEmpty().withMessage('El nombre es obligatorio')
+        .isLength({ min: 8 }).withMessage('El nombre debe tener al menos 8 caracteres')
+]
+
+export const validateChannelName = [
+    body('channelName')
+        .notEmpty().withMessage('El nombre es obligatorio')
+        .isLength({ min: 8 }).withMessage('El nombre debe tener al menos 8 caracteres')
+]
+
 export const handleErrors = (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -54,5 +66,16 @@ export const validateLoginData = [
 
 export const validateForgotPasswordData = [
     ...validateEmail,
+    handleErrors
+]
+
+export const validateResetPasswordData = [
+    ...validatePassword,
+    handleErrors
+]
+
+export const validateWorkspaceData = [
+    ...validateWorkspaceName,
+    ...validateChannelName, 
     handleErrors
 ]

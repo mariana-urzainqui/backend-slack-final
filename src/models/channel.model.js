@@ -1,11 +1,7 @@
 import mongoose from "mongoose"
 
 const channelSchema = new mongoose.Schema({
-    nombreCanal: {
-        type: String,
-        required: true
-    },
-    description: {
+    channelName: {
         type: String,
         required: true
     },

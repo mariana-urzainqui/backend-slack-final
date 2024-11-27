@@ -291,17 +291,7 @@ export const resetTokenController = async (req, res) => {
     try {
         const { password } = req.body
         const { reset_token } = req.params
-        if (!password || password.length < 8) {
-            const response = new ResponseBuilder()
-                .setOk(false)
-                .setStatus(400)
-                .setMessage('Bad request')
-                .setPayload({
-                    detail: 'La contraseña debe tener al menos 8 caracteres'
-                })
-                .build()
-            return res.status(400).json(response)
-        }
+        
         if (!reset_token) {
             const response = new ResponseBuilder()
                 .setOk(false)
@@ -329,7 +319,7 @@ export const resetTokenController = async (req, res) => {
 
         const { email } = decoded
 
-        const user = await UserRepository.obtenerPorEmail(email)
+        const user = await UserRepository.getByEmail(email)
 
         if (!user) {
             const response = new ResponseBuilder()

@@ -5,6 +5,7 @@ import cors from 'cors'
 import authRouter from "./router/auth.router.js"
 import statusRouter from "./router/status.router.js"
 import { verifyApiKeyMiddleware } from "./middlewares/auth.middleware.js"
+import workspaceRouter from "./router/workspace.router.js"
 
 
 const app = express()
@@ -16,6 +17,7 @@ app.use(verifyApiKeyMiddleware)
 
 app.use('/api/status', statusRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/workspace', workspaceRouter)
 
 
 app.listen(ENVIRONMENT.PORT, () => {
