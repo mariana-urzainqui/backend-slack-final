@@ -32,6 +32,12 @@ export const validateChannelName = [
         .isLength({ min: 8 }).withMessage('El nombre debe tener al menos 8 caracteres')
 ]
 
+export const validateMessageContent = [
+    body('content')
+    .notEmpty().withMessage('El contenido del mensaje no puede estar vacio')
+    .isLength({min: 1}).withMessage('El contenido del mensaje debe tener al menos un caracter')
+]
+
 export const handleErrors = (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -77,5 +83,20 @@ export const validateResetPasswordData = [
 export const validateWorkspaceData = [
     ...validateWorkspaceName,
     ...validateChannelName, 
+    handleErrors
+]
+
+export const validateWorkspaceUpdate = [
+    ...validateWorkspaceName,
+    handleErrors
+]
+
+export const validateChannelData = [
+    ...validateChannelName,
+    handleErrors
+]
+
+export const validateMessageData = [
+    ...validateMessageContent,
     handleErrors
 ]

@@ -5,6 +5,11 @@ const channelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Workspace',  
+        required: true
+    },
     messages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message',

@@ -13,6 +13,11 @@ const messageSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    channel: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Channel',
+        required: true
     }
 })
 

@@ -1,6 +1,5 @@
 import Channel from "../models/channel.model.js"
 
-
 class ChannelRepository {
     static async getById(id) {
         return await Channel.findById(id)
@@ -10,13 +9,23 @@ class ChannelRepository {
 
     static async getAll() {
         return await Channel.find()
-            .populate("messages", "content createdAt author") 
+            .populate("messages", "content createdAt author")
     }
 
-    static async create({ channelName, messages = [] }) {
+    static async getAllByWorkspaceId(workspaceId) {
+        try {
+            return await Channel.find({ workspaceId })
+                .populate("messages", "content createdAt author");
+        } catch (error) {
+            throw new Error("Error al obtener los canales para este workspace: " + error.message)
+        }
+    }
+
+    static async create({ channelName, messages = [], workspaceId }) {
         const channel = new Channel({
             channelName,
             messages,
+            workspaceId  
         })
         return await channel.save()
     }
