@@ -1,4 +1,5 @@
 import ENVIRONMENT from "../config/environment.config.js"
+import User from "../models/user.model.js"
 import ResponseBuilder from "../utils/builders/responseBuilder.js"
 import jwt from 'jsonwebtoken'
 
@@ -103,3 +104,47 @@ export const verifyApiKeyMiddleware = (req, res, next) => {
     }
 }
 
+export const verifyWorkspaceCreatorMiddleware = async (req, res, next) => {
+    const { workspace_id } = req.params
+    const userId = req.user.id
+
+    try {
+        const user = await User.findById(userId).populate('workspaces.workspaceId')
+        if (!user) {
+            const response = new ResponseBuilder()
+                .setOk(false)
+                .setStatus(404)
+                .setMessage('Usuario no encontrado')
+                .setPayload({
+                    detail: 'No se encontro un usuario con el id proporcionado'
+                })
+                .build()
+            return res.status(404).json(response)
+        }
+
+        const workspace = user.workspaces.find(workspace => workspace.workspaceId && workspace.workspaceId._id.toString() === workspace_id)
+        if (!workspace || workspace.role !== 'creator') {
+            const response = new ResponseBuilder()
+                .setOk(false)
+                .setStatus(403)
+                .setMessage('Acceso denegado')
+                .setPayload({
+                    detail: 'No tienes permisos para realizar esta acción.'
+                })
+                .build()
+            return res.status(403).json(response)
+        }
+        next()
+    }
+    catch (error) {
+        const response = new ResponseBuilder()
+            .setOk(false)
+            .setStatus(500)
+            .setMessage('Error al verificar los permisos del usuario')
+            .setPayload({
+                error: error.message
+            })
+            .build()
+        return res.status(500).json(response)
+    }
+}

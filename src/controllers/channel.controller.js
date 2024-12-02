@@ -51,7 +51,7 @@ export const createChannelController = async (req, res) => {
             .setStatus(201)
             .setMessage('Canal creado con éxito')
             .setPayload({ channel: newChannel })
-            .build();
+            .build()
         return res.status(201).json(response)
     }
     catch (error) {
@@ -78,7 +78,7 @@ export const getChannelByIdController = async (req, res) => {
                 .setPayload({
                     detail: 'No se encontró el canal con el ID proporcionado.'
                 })
-                .build();
+                .build()
             return res.status(404).json(response)
         }
         const response = new ResponseBuilder()

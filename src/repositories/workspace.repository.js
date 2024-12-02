@@ -27,7 +27,7 @@ class WorkspaceRepository {
     static async update(id, data) {
         return await Workspace.findByIdAndUpdate(id, data, { new: true })
             .populate("members", "name email")
-            .populate("canales", "channelName")
+            .populate("channels", "channelName")
     }
 
     static async delete(id) {

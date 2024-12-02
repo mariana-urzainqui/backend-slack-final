@@ -55,15 +55,19 @@ export const createWorkspaceController = async (req, res) => {
                 .build()
             return res.status(400).json(response)
         }
-        const newChannel = await ChannelRepository.create({
-            channelName: channelName
-        })
 
         const newWorkspace = await WorkspaceRepository.create({
             workspaceName,
             members: [userId],
-            channels: [newChannel._id]
         })
+
+        const newChannel = await ChannelRepository.create({
+            channelName: channelName,
+            workspaceId: newWorkspace._id
+        })
+
+        newWorkspace.channels = [newChannel._id]
+        await newWorkspace.save()
 
         const updatedUser = await UserRepository.addWorkspace(userId, {
             workspaceId: newWorkspace._id,
@@ -104,7 +108,7 @@ export const getWorkspaceByIdController = async (req, res) => {
     const { workspace_id } = req.params
     const userId = req.user.id
     try {
-        const workspace = await WorkspaceRepository.getById(id, userId)
+        const workspace = await WorkspaceRepository.getById(workspace_id, userId)
 
         if (!workspace) {
             const response = new ResponseBuilder()
@@ -142,39 +146,20 @@ export const getWorkspaceByIdController = async (req, res) => {
 export const updateWorkspaceController = async (req, res) => {
     const { workspace_id } = req.params
     const { workspaceName, members } = req.body
-    const userId = req.user.id
-
+    
     try {
-        const workspace = await WorkspaceRepository.getById(id)
-
+        const workspace = await WorkspaceRepository.getById(workspace_id, req.user.id)
         if (!workspace) {
             const response = new ResponseBuilder()
                 .setOk(false)
                 .setStatus(404)
                 .setMessage('Espacio de trabajo no encontrado')
-                .setPayload({
-                    detail: 'No se pudo encontrar el workspace con el ID proporcionado.'
-                })
-                .build();
+                .setPayload({ detail: `El workspace con ID ${workspace_id} no existe.` })
+                .build()
             return res.status(404).json(response)
         }
-        const user = await UserRepository.getByIdWithWorkspaces(userId)
-        const userWorkspace = user.workspaces.find(
-            (workspaceEntry) => workspaceEntry.workspaceId.toString() === id
-        )
-        if(!userWorkspace || userWorkspace.role != 'creator'){
-            const response = new ResponseBuilder()
-            .setOk(false)
-            .setStatus(403)
-            .setMessage('Acceso denegado')
-            .setPayload({
-                detail: 'No tienes permisos para actualizar este workspace'
-            })
-            .build()
-            return res.status(403).json(response)
-        }
 
-        const updatedWorkspace = await WorkspaceRepository.update(id, {
+        const updatedWorkspace = await WorkspaceRepository.update(workspace_id, {
             workspaceName: workspaceName || workspace.workspaceName,
             members: members || workspace.members
         })
@@ -189,7 +174,8 @@ export const updateWorkspaceController = async (req, res) => {
             .build()
         return res.status(200).json(response)
 
-    } catch (error) {
+    } 
+    catch (error) {
         const response = new ResponseBuilder()
             .setOk(false)
             .setStatus(500)
@@ -209,7 +195,7 @@ export const deleteWorkspaceController = async (req, res) => {
     const userId = req.user.id
 
     try{
-        const workspace = await WorkspaceRepository.getById(id)
+        const workspace = await WorkspaceRepository.getById(workspace_id, req.user.id)
 
         if(!workspace){
             const response = new ResponseBuilder()
@@ -223,32 +209,23 @@ export const deleteWorkspaceController = async (req, res) => {
             return res.status(404).json(response)
         }
 
-        const user = await UserRepository.getByIdWithWorkspaces(userId)
-        const userWorkspace = user.workspaces.find(
-            (workspaceEntry) => workspaceEntry.workspaceId.toString() === id
-        )
-        if(!userWorkspace || userWorkspace.role != 'creator'){
-            const response = new ResponseBuilder()
-            .setOk(false)
-            .setStatus(403)
-            .setMessage('Acceso denegado')
-            .setPayload({
-                detail: 'No tienes permisos para actualizar este workspace'
-            })
-            .build()
-            return res.status(403).json(response)
+        const channels = await ChannelRepository.getAllByWorkspaceId(workspace_id)
+        if (channels && channels.length > 0) {
+            for (const channel of channels) {
+                await ChannelRepository.delete(channel._id) 
+            }
         }
-        
-        await WorkspaceRepository.delete(id)
 
-        await UserRepository.removeWorkspace(userId, id)
+        await WorkspaceRepository.delete(workspace_id)
+
+        await UserRepository.removeWorkspace(userId, workspace_id)
 
         const response = new ResponseBuilder()
         .setOk(true)
         .setStatus(200)
         .setMessage('Espacio de trabajo eliminado con éxito')
         .setPayload({
-            detail: `El workspace con ID ${id} fue eliminado`
+            detail: `El workspace con ID ${workspace_id} fue eliminado`
         })
         .build()
         return res.status(200).json(response)
