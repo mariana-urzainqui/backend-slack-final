@@ -1,11 +1,12 @@
+import User from "../models/user.model.js";
 import Workspace from "../models/workspace.model.js"
 
 class WorkspaceRepository {
-    static async getById(id, userId) {
-        return await Workspace.findOne({_id: id, members: userId})
-            .populate("members", "name email")
-            .populate("channels", "channelName")
-    }
+        static async getById(id, userId) {
+            return await Workspace.findOne({_id: id, members: userId})
+                .populate("members", "name email")
+                .populate("channels", "channelName")
+        }
 
     static async getAllByUserId(userId) {
         return await Workspace.find({ members: userId })
@@ -34,28 +35,43 @@ class WorkspaceRepository {
         return await Workspace.findByIdAndDelete(id)
     }
 
-    static async addMember(workspaceId, userId) {
+    static async addMember(workspaceId, userId, role = 'member') {
         const workspace = await this.getById(workspaceId)
         if (!workspace) {
             throw new Error("Workspace no encontrado")
         }
+        
         if (workspace.members.includes(userId)) {
             throw new Error("El usuario ya es miembro del workspace")
         }
+    
         workspace.members.push(userId)
-        return await workspace.save()
+        await workspace.save()
+    
+        const user = await User.getById(userId)
+        if (!user) {
+            throw new Error("Usuario no encontrado")
+        }
+
+        const isMember = user.workspaces.some(ws => ws.workspaceId.toString() === workspaceId.toString())
+        if (!isMember) {
+            user.workspaces.push({ workspaceId, role })
+            await user.save()
+        }
+    
+        return workspace
     }
 
     static async addChannel(workspaceId, channelId) {
-        const workspace = await this.getById(workspaceId)
-        if (!workspace) {
-            throw new Error("Workspace no encontrado")
+        try {
+            return await Workspace.findByIdAndUpdate(
+                workspaceId,
+                { $push: { channels: channelId } },
+                { new: true }
+            )
+        } catch (error) {
+            throw new Error("Error al añadir el canal al workspace: " + error.message)
         }
-        if (workspace.canales.includes(channelId)) {
-            throw new Error("El canal ya está asociado al workspace")
-        }
-        workspace.canales.push(channelId)
-        return await workspace.save()
     }
 }
 

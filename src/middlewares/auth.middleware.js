@@ -1,5 +1,6 @@
 import ENVIRONMENT from "../config/environment.config.js"
 import User from "../models/user.model.js"
+import ChannelRepository from "../repositories/channel.repository.js"
 import ResponseBuilder from "../utils/builders/responseBuilder.js"
 import jwt from 'jsonwebtoken'
 
@@ -105,7 +106,7 @@ export const verifyApiKeyMiddleware = (req, res, next) => {
 }
 
 export const verifyWorkspaceCreatorMiddleware = async (req, res, next) => {
-    const { workspace_id } = req.params
+    const { workspace_id, channel_id } = req.params
     const userId = req.user.id
 
     try {
@@ -134,6 +135,7 @@ export const verifyWorkspaceCreatorMiddleware = async (req, res, next) => {
                 .build()
             return res.status(403).json(response)
         }
+
         next()
     }
     catch (error) {

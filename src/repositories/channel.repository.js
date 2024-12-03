@@ -3,8 +3,14 @@ import Channel from "../models/channel.model.js"
 class ChannelRepository {
     static async getById(id) {
         return await Channel.findById(id)
-            .populate("messages", "content createdAt author") 
-            .populate("author", "name email")
+        .populate({
+            path: "messages", 
+            select: "content createdAt author", 
+            populate: {
+                path: "author",  
+                select: "name email"  
+            }
+        })
     }
 
     static async getAll() {
@@ -37,6 +43,15 @@ class ChannelRepository {
 
     static async delete(id) {
         return await Channel.findByIdAndDelete(id)
+    }
+
+    static async removeMessageFromChannel(channelId, messageId) {
+        const channel = await Channel.findById(channelId)
+        if (!channel) {
+            throw new Error("Canal no encontrado")
+        }
+        channel.messages = channel.messages.filter(message => message.toString() !== messageId.toString())
+        await channel.save()
     }
 }
 

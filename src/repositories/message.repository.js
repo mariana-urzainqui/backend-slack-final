@@ -13,9 +13,9 @@ class MessageRepository {
             .populate("author", "name email")
     }
 
-    static async create({ channelId, authorId, content }) {
+    static async create({ channel, authorId, content }) {
         const newMessage = new Message({
-            channelId,
+            channel,
             author: authorId,
             content
         })

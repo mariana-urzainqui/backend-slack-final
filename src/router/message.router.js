@@ -5,14 +5,12 @@ import {
     createMessageController,
     deleteMessageController, 
     getMessagesByChannelController, 
-    updateMessageController 
 } from '../controllers/message.controller.js'
 
 const messageRouter = express.Router()
 
 messageRouter.get('/:channel_id', verifyTokenMiddleware(), getMessagesByChannelController)
 messageRouter.post('/:channel_id/create', verifyTokenMiddleware(), validateMessageData, createMessageController)
-messageRouter.put('/:message_id', verifyTokenMiddleware(), updateMessageController)
-messageRouter.delete('/:message_id', verifyTokenMiddleware(), deleteMessageController)
+messageRouter.delete('/:message_id/delete', verifyTokenMiddleware(), deleteMessageController)
 
 export default messageRouter

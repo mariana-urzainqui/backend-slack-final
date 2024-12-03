@@ -1,4 +1,6 @@
 import ChannelRepository from "../repositories/channel.repository.js"
+import WorkspaceRepository from "../repositories/workspace.repository.js"
+import ResponseBuilder from "../utils/builders/responseBuilder.js"
 
 export const getAllChannelsController = async (req, res) => {
     const { workspace_id } = req.params
@@ -41,11 +43,28 @@ export const getAllChannelsController = async (req, res) => {
 export const createChannelController = async (req, res) => {
     const { channelName } = req.body
     const { workspace_id } = req.params
+    const userId = req.user.id
     try {
+        const workspace = await WorkspaceRepository.getById(workspace_id, userId)
+        if (!workspace) {
+            const response = new ResponseBuilder()
+                .setOk(false)
+                .setStatus(404)
+                .setMessage('Workspace no encontrado')
+                .setPayload({
+                    detail: 'No se encontró el workspace al que se intentó asociar el canal.',
+                })
+                .build()
+            return res.status(404).json(response)
+        }
+
         const newChannel = await ChannelRepository.create({
             channelName,
             workspaceId: workspace_id
         })
+
+        await WorkspaceRepository.addChannel(workspace_id, newChannel._id)
+
         const response = new ResponseBuilder()
             .setOk(true)
             .setStatus(201)
@@ -103,22 +122,36 @@ export const getChannelByIdController = async (req, res) => {
 export const updateChannelController = async (req, res) => {
     const { channel_id } = req.params
     const { channelName } = req.body
+    const { workspace_id } = req.params
 
     try {
-        const updatedChannel = await ChannelRepository.update(channel_id, {
-            channelName
-        })
-        if (!updatedChannel) {
+        const channel = await ChannelRepository.getById(channel_id)
+        if (!channel) {
             const response = new ResponseBuilder()
                 .setOk(false)
                 .setStatus(404)
                 .setMessage('Canal no encontrado')
                 .setPayload({
-                    detail: 'No se pudo actualizar el canal con el ID proporcionado.'
+                    detail: 'No se encontró el canal con el ID proporcionado.'
                 })
                 .build()
             return res.status(404).json(response)
         }
+
+        if (channel.workspaceId.toString() !== workspace_id) {
+            const response = new ResponseBuilder()
+                .setOk(false)
+                .setStatus(403)
+                .setMessage('Acceso denegado')
+                .setPayload({
+                    detail: 'El canal no pertenece al workspace indicado.'
+                })
+                .build()
+            return res.status(403).json(response)
+        }
+        channel.channelName = channelName || channel.channelName
+        const updatedChannel = await channel.save()
+        
         const response = new ResponseBuilder()
             .setOk(true)
             .setStatus(200)
@@ -139,22 +172,26 @@ export const updateChannelController = async (req, res) => {
 }
 
 export const deleteChannelController = async (req, res) => {
-    const { channel_id } = req.params
+    const { workspace_id, channel_id } = req.params
     try {
         const channel = await ChannelRepository.getById(channel_id)
-        if (!channel) {
+        if (!channel || channel.workspaceId.toString() !== workspace_id) {
             const response = new ResponseBuilder()
                 .setOk(false)
                 .setStatus(404)
-                .setMessage('Canal no encontrado')
+                .setMessage('Canal no encontrado o no pertenece al workspace')
                 .setPayload({
-                    detail: 'No se pudo encontrar el canal con el ID proporcionado.'
+                    detail: 'El canal no pertenece al workspace o no existe.'
                 })
                 .build();
             return res.status(404).json(response)
         }
 
         await ChannelRepository.delete(channel_id)
+
+        await WorkspaceRepository.update(workspace_id, {
+            $pull: { channels: channel_id }
+        })
 
         const response = new ResponseBuilder()
             .setOk(true)
