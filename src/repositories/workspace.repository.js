@@ -36,31 +36,17 @@ class WorkspaceRepository {
     }
 
     static async addMember(workspaceId, userId, role = 'member') {
-        const workspace = await this.getById(workspaceId)
-        if (!workspace) {
-            throw new Error("Workspace no encontrado")
-        }
-        
-        if (workspace.members.includes(userId)) {
-            throw new Error("El usuario ya es miembro del workspace")
-        }
-    
+        const workspace = await Workspace.findById(workspaceId)
         workspace.members.push(userId)
         await workspace.save()
     
-        const user = await User.getById(userId)
-        if (!user) {
-            throw new Error("Usuario no encontrado")
-        }
-
-        const isMember = user.workspaces.some(ws => ws.workspaceId.toString() === workspaceId.toString())
-        if (!isMember) {
-            user.workspaces.push({ workspaceId, role })
-            await user.save()
-        }
+        const user = await User.findById(userId)
+        user.workspaces.push({ workspaceId, role })
+        await user.save()
     
         return workspace
     }
+    
 
     static async addChannel(workspaceId, channelId) {
         try {
