@@ -46,6 +46,21 @@ class WorkspaceRepository {
     
         return workspace
     }
+
+    static async removeMember(workspaceId, userId) {
+        await Workspace.findByIdAndUpdate(
+            workspaceId,
+            { $pull: { members: userId } },
+            { new: true }
+        )
+
+        await User.findByIdAndUpdate(
+            userId,
+            { $pull: { workspaces: { workspaceId } } },
+            { new: true }
+        )
+    }
+    
     
 
     static async addChannel(workspaceId, channelId) {

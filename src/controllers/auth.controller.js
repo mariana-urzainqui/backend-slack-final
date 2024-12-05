@@ -5,8 +5,6 @@ import jwt from "jsonwebtoken"
 import UserRepository from "../repositories/user.repository.js"
 import EmailService from "../services/email.service.js"
 
-
-
 export const registerUserController = async (req, res) => {
     try {
         const { name, email, password } = req.body

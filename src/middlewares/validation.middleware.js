@@ -29,7 +29,7 @@ export const validateWorkspaceName = [
 export const validateChannelName = [
     body('channelName')
         .notEmpty().withMessage('El nombre es obligatorio')
-        .isLength({ min: 8 }).withMessage('El nombre debe tener al menos 8 caracteres')
+        .isLength({ min: 6 }).withMessage('El nombre debe tener al menos 6 caracteres')
 ]
 
 export const validateMessageContent = [
