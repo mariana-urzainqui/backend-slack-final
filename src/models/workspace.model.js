@@ -8,7 +8,7 @@ const workspaceSchema = new mongoose.Schema({
     workspacePhoto: {
         type: String,
         required: true,
-        default: 'https://res.cloudinary.com/dhz0yetjy/image/upload/v1732718249/default-workspace.image_ezra4h.webp'
+        default: 'https://res.cloudinary.com/dhz0yetjy/image/upload/v1733611903/nuevo-workspace_k4telt.png'
     },
     members: [{
         type: mongoose.Schema.Types.ObjectId,

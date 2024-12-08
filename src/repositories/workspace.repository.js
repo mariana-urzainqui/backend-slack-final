@@ -10,7 +10,7 @@ class WorkspaceRepository {
 
     static async getAllByUserId(userId) {
         return await Workspace.find({ members: userId })
-            .populate("members", "name email")
+            .populate("members", "name email photo")
             .populate("channels", "channelName")
     }
 

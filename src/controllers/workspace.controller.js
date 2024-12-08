@@ -11,14 +11,13 @@ export const getAllWorkspacesController = async (req, res) => {
             const response = new ResponseBuilder()
                 .setOk(false)
                 .setStatus(404)
-                .setMessage('No se encontraron workspaces.')
+                .setMessage('Aún no tienes ningún espacio de trabajo. ¡Crea uno nuevo para comenzar!')
                 .setPayload({
                     workspaces: [],
                     detail: 'El usuario no pertenece a ningún workspace.'
                 })
                 .build()
-            return res.status(404).json(response)
-
+            return res.status(404).json(response)   
         }
         const response = new ResponseBuilder()
             .setOk(true)
