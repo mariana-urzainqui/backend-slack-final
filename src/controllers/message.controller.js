@@ -46,7 +46,7 @@ export const createMessageController = async (req, res) => {
     const { content } = req.body
     const userId = req.user.id
 
-    try {
+    try { 
         const channel = await ChannelRepository.getById(channel_id)
         if (!channel) {
             const response = new ResponseBuilder()

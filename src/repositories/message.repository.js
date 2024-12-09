@@ -19,7 +19,8 @@ class MessageRepository {
             author: authorId,
             content
         })
-        return await newMessage.save()
+        await newMessage.save()
+        return await newMessage.populate('author', '_id name email photo')
     }
 
     static async update(id, data) {

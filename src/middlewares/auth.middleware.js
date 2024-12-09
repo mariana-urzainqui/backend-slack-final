@@ -21,6 +21,7 @@ export const verifyTokenMiddleware = (roles_permitidos = []) => {
                     .build()
                 return res.status(401).json(response)
             }
+
             /* 'Bearer token' => split ['Bearer', 'token'] => [1] para acceder al token*/
             const access_token = auth_header.split(' ')[1]
             if (!access_token) {

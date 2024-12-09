@@ -8,7 +8,7 @@ class ChannelRepository {
             select: "content createdAt author", 
             populate: {
                 path: "author",  
-                select: "name email"  
+                select: "name email photo"  
             }
         })
     }
