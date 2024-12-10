@@ -1,11 +1,8 @@
 import ENVIRONMENT from "../config/environment.config.js"
 import User from "../models/user.model.js"
-import ChannelRepository from "../repositories/channel.repository.js"
 import ResponseBuilder from "../utils/builders/responseBuilder.js"
 import jwt from 'jsonwebtoken'
 
-//roles_permitidos es un parametro que en caso de estar deberia ser un array de roles o en caso de no estar debe ser un array vacio
-//se invoca el verifyTokenMiddleware y recibe los roles permitidos, y luego esa funcion retorna el middleware
 export const verifyTokenMiddleware = (roles_permitidos = []) => {
     return (req, res, next) => {
         try {
@@ -21,8 +18,6 @@ export const verifyTokenMiddleware = (roles_permitidos = []) => {
                     .build()
                 return res.status(401).json(response)
             }
-
-            /* 'Bearer token' => split ['Bearer', 'token'] => [1] para acceder al token*/
             const access_token = auth_header.split(' ')[1]
             if (!access_token) {
                 const response = new ResponseBuilder()
@@ -38,7 +33,6 @@ export const verifyTokenMiddleware = (roles_permitidos = []) => {
             const decoded = jwt.verify(access_token, ENVIRONMENT.JWT_SECRET)
             req.user = decoded
 
-            //Si hay roles y no esta incluido el rol del usuario dentro de los roles permitidos, tiramos error
             if (roles_permitidos.length && !roles_permitidos.includes(req.user.role)) {
                 const response = new ResponseBuilder()
                     .setOk(false)
@@ -50,7 +44,7 @@ export const verifyTokenMiddleware = (roles_permitidos = []) => {
                     .build()
                 return res.status(401).json(response)
             }
-            return next() //Pasamos al sig controlador
+            return next() 
         }
         catch (error) {
             const response = new ResponseBuilder()
