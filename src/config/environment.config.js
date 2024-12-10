@@ -11,9 +11,6 @@ const ENVIRONMENT = {
     GMAIL_USER: process.env.GMAIL_USER,
     URL_FRONT: process.env.URL_FRONT,
     API_KEY_INTERN: process.env.API_KEY_INTERN,
-    CLOUD_NAME: process.env.CLOUD_NAME,
-    CLOUD_API_KEY: process.env.CLOUD_API_KEY,
-    CLOUD_API_SECRET: process.env.CLOUD_API_SECRET
 }
 
 export default ENVIRONMENT
