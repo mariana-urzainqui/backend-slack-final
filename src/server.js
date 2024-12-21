@@ -19,7 +19,6 @@ app.use(cors({
     origin: ['https://frontend-slack-final.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
 }))
 app.use(express.json({ limit: '5mb' }))
 app.use(verifyApiKeyMiddleware)
