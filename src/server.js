@@ -10,10 +10,7 @@ import channelRouter from "./router/channel.router.js"
 import messageRouter from "./router/message.router.js"
 import memberRouter from "./router/member.router.js"
 
-
 const app = express()
-
-const cors = require('cors')
 
 app.use(cors({
     origin: '*'
