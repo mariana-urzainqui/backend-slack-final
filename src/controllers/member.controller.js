@@ -1,5 +1,5 @@
-import WorkspaceRepository from "../repositories/workspace.repository.js";
-import ResponseBuilder from "../utils/builders/responseBuilder.js";
+import WorkspaceRepository from "../repositories/workspace.repository.js"
+import ResponseBuilder from "../utils/builders/responseBuilder.js"
 
 
 export const addMemberToWorkspaceController = async (req, res) => {

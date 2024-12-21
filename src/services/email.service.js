@@ -60,7 +60,8 @@ class EmailService {
             })
 
             console.log(`Correo de verificación enviado a ${email}`)
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Error al enviar el correo de verificación:", error)
             throw new Error("No se pudo enviar el correo de verificación")
         }
@@ -124,7 +125,8 @@ class EmailService {
             })
     
             console.log(`Correo de restablecimiento enviado a ${email}`)
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Error al enviar el correo de restablecimiento:", error)
             throw new Error("No se pudo enviar el correo de restablecimiento")
         }

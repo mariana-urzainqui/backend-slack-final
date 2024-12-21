@@ -22,7 +22,8 @@ class ChannelRepository {
         try {
             return await Channel.find({ workspaceId })
                 .populate("messages", "content createdAt author");
-        } catch (error) {
+        } 
+        catch (error) {
             throw new Error("Error al obtener los canales para este workspace: " + error.message)
         }
     }

@@ -5,7 +5,7 @@
 En este proyecto, desarrollé el backend para una aplicación de chat inspirada en Slack. El backend se encarga de manejar la autenticación, la gestión de workspaces y canales, el almacenamiento y la recuperación de mensajes en tiempo real, entre otras funcionalidades.
 
 ## **Características**
-- **Autenticación**: Registro de usuarios, inicio de sesión y recuperación de contraseñas.
+- **Autenticación**: Registro de usuarios, verificación de cuenta, inicio de sesión y recuperación de contraseñas.
 - **Gestión de Workspaces**: Creación, actualización y eliminación de espacios de trabajo.
 - **Gestión de Canales**: Creación, actualización y eliminación de canales dentro de los workspaces.
 - **Mensajes**: Envío, recepción y eliminación de mensajes en tiempo real.
@@ -21,7 +21,7 @@ En este proyecto, desarrollé el backend para una aplicación de chat inspirada 
 - **JWT**: Para autenticación y autorización.
 - **Bcrypt**: Para el hashing de contraseñas.
 - **Dotenv**: Manejo de variables de entorno.
-- **Nodemailer**: Envío de correos electrónicos para la recuperación de contraseñas.
+- **Nodemailer**: Envío de correos electrónicos para la verificación de cuenta y recuperación de contraseña.
 - **Cors**: Habilitación de solicitudes HTTP entre diferentes orígenes.
 - **Express Validator**: Validación de datos en las rutas de Express.
 
@@ -80,15 +80,15 @@ En este proyecto, desarrollé el backend para una aplicación de chat inspirada 
 - [✔] Usado en el frontend.
 - [✖] No usado en el frontend.*
 
-*Algunos endpoints están implementados en el backend, pero no se utilizan actualmente en el frontend. Están disponibles para futuras integraciones.
+*Algunos endpoints ya están implementados en el backend pero no se utilizan actualmente en el frontend. Estos están disponibles para futuras integraciones. Todos los endpoints han sido probados con Postman y funcionan correctamente.
 
 ## **Credenciales de Prueba**
-Puedes usar las siguientes credenciales para acceder al sistema en el entorno de desarrollo:
+Puedes usar las siguientes credenciales para acceder al sistema:
 
 **Usuario:** p92068967@gmail.com  
 **Contraseña:** Juan.12345
 
-> Nota: Estas credenciales son solo para pruebas y no deben usarse en producción.
+
 
 
 

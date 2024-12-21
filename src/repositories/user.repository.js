@@ -1,6 +1,6 @@
-import User from "../models/user.model.js";
+import User from "../models/user.model.js"
 import bcrypt from "bcrypt"
-import ENVIRONMENT from "../config/environment.config.js";
+import ENVIRONMENT from "../config/environment.config.js"
 import jwt from 'jsonwebtoken'
 
 class UserRepository {

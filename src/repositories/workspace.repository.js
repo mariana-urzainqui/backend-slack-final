@@ -1,4 +1,4 @@
-import User from "../models/user.model.js";
+import User from "../models/user.model.js"
 import Workspace from "../models/workspace.model.js"
 
 class WorkspaceRepository {

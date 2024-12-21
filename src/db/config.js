@@ -1,4 +1,3 @@
-// Conexion con la base de datos
 import mongoose from 'mongoose'
 import ENVIRONMENT from '../config/environment.config.js'
 
