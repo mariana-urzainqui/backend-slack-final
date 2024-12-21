@@ -13,15 +13,22 @@ import memberRouter from "./router/member.router.js"
 
 const app = express()
 
-app.use(cors())
-app.use(express.json({limit: '5mb'}))
+const cors = require('cors');
+
+app.use(cors({
+    origin: ['https://frontend-slack-final.vercel.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}))
+app.use(express.json({ limit: '5mb' }))
 app.use(verifyApiKeyMiddleware)
 
 
 app.use('/api/status', statusRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/workspace', workspaceRouter)
-app.use('/api/channel', channelRouter)      
+app.use('/api/channel', channelRouter)
 app.use('/api/message', messageRouter)
 app.use('/api/workspace', memberRouter)
 
